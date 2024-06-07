@@ -1,10 +1,14 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
+import database
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route("/", methods=["GET"])
-def get_data():
-    return jsonify({"message": "Hello World"})
+@app.route('/data', methods=['GET'])
+def get_article():
+    data = database.get_data()
+    return jsonify(data)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
