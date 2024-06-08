@@ -8,7 +8,7 @@ connect_db = mysql.connector.connect(
 )
 
 def get_data():
-    cursor = connect_db.cursor()
+    cursor = connect_db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM product")
     result = cursor.fetchall()
     cursor.close()
