@@ -20,7 +20,8 @@ def add_product(data):
         productImage=data['productImage'],
         productDescription=data['productDescription'],
         colorTone=data['colorTone'],
-        productCollection=data['productCollection']
+        productCollection=data['productCollection'],
+        colorShadeImage=data['colorShadeImage'],
     )
     db.session.add(new_product)
     db.session.commit()
