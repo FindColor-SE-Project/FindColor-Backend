@@ -1,3 +1,5 @@
+from flask import jsonify, request
+
 from backend.models.ProductModel import Product
 from backend.database.Database import db
 
@@ -7,7 +9,9 @@ def get_all_products():
 
 
 def add_product(data):
+    data = request.get_json()
     new_product = Product(
+        productID=data['productID'],
         productName=data['productName'],
         brandLogo=data['brandLogo'],
         brandName=data['brandName'],
@@ -15,8 +19,9 @@ def add_product(data):
         colorShade=data['colorShade'],
         productImage=data['productImage'],
         productDescription=data['productDescription'],
-        colorTone=data['colorTone']
+        colorTone=data['colorTone'],
+        productCollection=data['productCollection']
     )
     db.session.add(new_product)
     db.session.commit()
-    return new_product.to_dict()
+    return jsonify(new_product.to_dict()), 201

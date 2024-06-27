@@ -2,7 +2,7 @@ from backend.database.Database import db
 
 
 class Product(db.Model):
-    __tablename__ = 'product'  # กำหนดชื่อตารางเพื่อให้ตรงกับที่มีในฐานข้อมูล
+    __tablename__ = 'product'
     productID = db.Column(db.Integer, primary_key=True)
     productName = db.Column(db.String(255), nullable=False)
     brandLogo = db.Column(db.String(255), nullable=False)
