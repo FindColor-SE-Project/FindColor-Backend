@@ -21,6 +21,7 @@ def add_product(data):
         productDescription=data['productDescription'],
         colorTone=data['colorTone'],
         productCollection=data['productCollection'],
+        collectionName=data['collectionName'],
         colorShadeImage=data['colorShadeImage'],
     )
     db.session.add(new_product)
