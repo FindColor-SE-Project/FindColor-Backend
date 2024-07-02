@@ -7,7 +7,7 @@ import numpy as np
 import urllib.request
 
 # Load the Excel file
-file = r"Scrape/4U2/4U2Lip.xlsx"
+file = r"Scrape/4U2/4U2Eyes.xlsx"
 df = pd.read_excel(file)
 
 # ดึงข้อมูลจากชื่อ column
@@ -19,14 +19,14 @@ exDescription = list(df['Description'])
 # แก้ข้อมูลของ exCategory ให้เป็น (Lips, Blush หรือ Eyeshadow)
 exCategory = []
 for element in exCategory_Brand:
-    if "ปาก" in element:
+    if "ปาก" in element or "ลิป" in element:
         exCategory.append("Lips")
-    elif "แก้ม" in element:
+    elif "แก้ม" in element or "บลัช" in element:
         exCategory.append("Blush")
-    elif "ตา" in element:
+    elif "ตา" in element or "อาย" in element:
         exCategory.append("Eyeshadow")
     else:
-        print(element)
+        print("can't define category in: ", element)
 
 # หาแบรนด์ใน exCategory_Brand และรวบรวมไว้ใน exBrand
 exBrand = []
@@ -49,6 +49,7 @@ for description in exDescription:
     split_description = re.split(r'[\u0E00-\u0E7F]', description, maxsplit=1)
     exName.append(split_description[0].strip())
 
+
 # Function to create a color bar
 def create_bar(height, width, color):
     bar = np.zeros((height, width, 3), np.uint8)
@@ -56,8 +57,9 @@ def create_bar(height, width, color):
     red, green, blue = int(color[2]), int(color[1]), int(color[0])
     return bar, (red, green, blue)
 
+
 # Function to get RGB values from an image URL
-def get_dominant_colors(url, number_clusters=1):
+def get_dominant_colors(url, number_clusters):
     try:
         # Download the image from the URL
         req = urllib.request.urlopen(url)
@@ -76,27 +78,58 @@ def get_dominant_colors(url, number_clusters=1):
         compactness, labels, centers = cv2.kmeans(data, number_clusters, None, criteria, 10, flags)
 
         rgb_values = []
+        # test color81 82 84 85 88-95
+        bars = []
         for index, row in enumerate(centers):
-            _, rgb = create_bar(200, 200, row)
+            bar, rgb = create_bar(200, 200, row)
+            bars.append(bar)
             rgb_values.append(rgb)
+
+        img_bar = np.hstack(bars)
+
+        # Display the image and the dominant colors
+        cv2.imshow('Image', img)
+        cv2.imshow('Dominant colors', img_bar)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         return rgb_values
     except Exception as e:
         print(f"Error processing URL {url}: {e}")
         return []
 
+
 # ดึง link รูปสีจาก color column และประมวลผลหา RGB
 color_column = df['color']
 exColor = []
 exRGBcolor = []
 
-for html_content in color_column:
+for i, html_content in enumerate(color_column):
     soup = BeautifulSoup(html_content, 'html.parser')
     active_image_links = [img['src'] for li in soup.find_all('li', class_='active') for img in li.find_all('img')]
     exColor.append(active_image_links)
     dominant_colors = []
+
+    # Set number_clusters based on exBrand and exCategory
+    category = exCategory[i]
+    brand = exBrand[i]
+    if category in ['Lips', 'Blush', 'Eyeshadow'] and brand in ['2P', '4U2', 'CathyDoll', 'Laka', 'Sasi']:
+        if brand == "4U2" and category == "Eyeshadow":
+            number_clusters = 2
+        elif brand == "CathyDoll" and category == "Eyeshadow":
+            number_clusters = 3
+        elif brand == "Sasi" and category == "Eyeshadow":
+            number_clusters = 4
+        elif brand == "2P" and category == "Blush":
+            number_clusters = 2
+        else:
+            number_clusters = 1
+    else:
+        print(f"Cannot determine number_clusters for: {brand}, {category}")
+        number_clusters = 1
+
     for link in active_image_links:
-        dominant_colors.extend(get_dominant_colors(link))
+        dominant_colors.extend(get_dominant_colors(link, number_clusters))
     exRGBcolor.append(dominant_colors)
 
 # Print the results
