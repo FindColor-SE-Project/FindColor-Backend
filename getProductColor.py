@@ -9,7 +9,7 @@ def create_bar(height, width, color):
     return bar, (red, green, blue)
 
 # ใส่ลิ้งค์ภาพตรงนี้
-url = "https://s2.konvy.com/static/team_related/2023/1120/17004652479190.jpg?fbclid=IwZXh0bgNhZW0CMTAAAR2jG-sn8auFkcCdXOMLmrgoXygUwW7YeALuXNfKJPjP7NrvwLE70YQ2H6k_aem_Af6-awPb3zi8qrdNRDvCc9dMJJ2QSxnNH5QtAgJFOnEDomiR4Mmv6FvtK4E62N41lC80mEgn-qaha4ZHTlply-E4"
+url = "https://s2.konvy.com/static/team_related/2023/0627/16878618075811.jpg"
 
 # Download the image from the URL
 req = urllib.request.urlopen(url)
