@@ -4,10 +4,11 @@ import csv
 import clawer
 
 page_number = 1
+previous_product_urls = []
 
 while True:
     print('Page', page_number)
-    raw_url = f'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,7337,2998,4589_-2:187&page={page_number}'
+    raw_url = f'https://www.konvy.com/list/makeup/?filter_params=-1:3913,50,2998,4589,7337_-2:6992&page={page_number}'
     url = requests.get(raw_url)
     soup = BeautifulSoup(url.content, "html.parser")
 
@@ -22,27 +23,31 @@ while True:
         product_url = (product.find_all('a')[1]['href'])
         product_url_list.append(product_url)
 
-    product_data = []
+    # Check if the current product URLs are the same as the previous ones
+    if product_url_list == previous_product_urls:
+        print('Reached the last page, ending scraping.')
+        break
 
+    product_data = []
     for prod_url in product_url_list:
-        product_data.append(clawer.get_product_detail(prod_url))
+        try:
+            product_data.append(clawer.get_product_detail(prod_url))
+        except Exception as e:
+            print(f"Error processing URL {prod_url}: {e}")
 
     print(product_data)
 
     fields = ['brand', 'logo', 'category', 'name', 'description', 'image', 'color']
 
-    # name of csv file
+    # Name of csv file
     filename = f'{page_number}-product-list.csv'
 
-    # writing to csv file
+    # Writing to csv file
     with open(filename, 'w', encoding='utf-8') as csvfile:
-        # creating a csv dict writer object
         writer = csv.DictWriter(csvfile, fieldnames=fields)
-
-        # writing headers (field names)
         writer.writeheader()
-
-        # writing data rows
         writer.writerows(product_data)
 
+    # Update the previous product URLs and increment the page number
+    previous_product_urls = product_url_list
     page_number += 1
