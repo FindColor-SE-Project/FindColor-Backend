@@ -9,7 +9,7 @@ def create_bar(height, width, color):
     return bar, (red, green, blue)
 
 # ใส่ลิ้งค์ภาพตรงนี้
-url = "https://s2.konvy.com/static/team_related/2023/0627/16878618075811.jpg"
+url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJe3PwV-8NUZIi72g8TJhKJ2LNRPgn6GdrfQ&s"
 
 # Download the image from the URL
 req = urllib.request.urlopen(url)
@@ -24,7 +24,7 @@ data = np.reshape(img, (height * width, 3))
 data = np.float32(data)
 
 # ใส่ว่าเอากี่สีตรงนี้
-number_clusters = 2
+number_clusters = 5
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 flags = cv2.KMEANS_RANDOM_CENTERS
 compactness, labels, centers = cv2.kmeans(data, number_clusters, None, criteria, 10, flags)

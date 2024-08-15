@@ -3,14 +3,20 @@ import requests
 import csv
 import clawer
 
+page_number = 1
 
-for i in range(1,4):
-    print('Page', i)
-    raw_url = 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,7337,2998,4589_-2:187&page=' + str(i)
+while True:
+    print('Page', page_number)
+    raw_url = f'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,7337,2998,4589_-2:187&page={page_number}'
     url = requests.get(raw_url)
     soup = BeautifulSoup(url.content, "html.parser")
+
     products = soup.find('ul', {'class': 'lise-row4 New_clear'}).find_all('li')
-    # print(products)
+
+    if not products:
+        print('No more products found, ending scraping.')
+        break
+
     product_url_list = []
     for product in products:
         product_url = (product.find_all('a')[1]['href'])
@@ -26,7 +32,7 @@ for i in range(1,4):
     fields = ['brand', 'logo', 'category', 'name', 'description', 'image', 'color']
 
     # name of csv file
-    filename = f'{i}-product-list.csv'
+    filename = f'{page_number}-product-list.csv'
 
     # writing to csv file
     with open(filename, 'w', encoding='utf-8') as csvfile:
@@ -38,3 +44,5 @@ for i in range(1,4):
 
         # writing data rows
         writer.writerows(product_data)
+
+    page_number += 1
