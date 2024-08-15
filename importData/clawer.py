@@ -23,7 +23,7 @@ def get_product_detail(url) :
     productCategory = str(meta[2].text).strip()
     if "ปาก" in productCategory or "ลิป" in productCategory:
         productCategory = "Lips"
-    elif "แก้ม" in productCategory or "บลัช" in productCategory:
+    elif "แก้ม" in productCategory or "บลัช" in productCategory or "เฟซ" in productCategory:
         productCategory = "Blush"
     elif "ตา" in productCategory or "อาย" in productCategory:
         productCategory = "Eyeshadow"

@@ -3,51 +3,63 @@ import requests
 import csv
 import clawer
 
-page_number = 1
-previous_product_urls = []
+# List of URLs to scrape
+url_list = [
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,7337,2998,4589_-2:187',
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:1101',
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,3913,4589,7337_-2:185',
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:188',
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,4589,2998,7337_-2:6992',
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,4589,7337,3913_-2:180'
+]
 
-while True:
-    print('Page', page_number)
-    raw_url = f'https://www.konvy.com/list/makeup/?filter_params=-1:3913,50,2998,4589,7337_-2:6992&page={page_number}'
-    url = requests.get(raw_url)
-    soup = BeautifulSoup(url.content, "html.parser")
+for url_index, base_url in enumerate(url_list):
+    print(f'Scraping URL {url_index + 1}: {base_url}')
+    page_number = 1
+    previous_product_urls = []
 
-    products = soup.find('ul', {'class': 'lise-row4 New_clear'}).find_all('li')
+    while True:
+        print('Page', page_number)
+        raw_url = f'{base_url}&page={page_number}'
+        response = requests.get(raw_url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
-    if not products:
-        print('No more products found, ending scraping.')
-        break
+        products = soup.find('ul', {'class': 'lise-row4 New_clear'}).find_all('li')
 
-    product_url_list = []
-    for product in products:
-        product_url = (product.find_all('a')[1]['href'])
-        product_url_list.append(product_url)
+        if not products:
+            print('No more products found, ending scraping.')
+            break
 
-    # Check if the current product URLs are the same as the previous ones
-    if product_url_list == previous_product_urls:
-        print('Reached the last page, ending scraping.')
-        break
+        product_url_list = []
+        for product in products:
+            product_url = (product.find_all('a')[1]['href'])
+            product_url_list.append(product_url)
 
-    product_data = []
-    for prod_url in product_url_list:
-        try:
-            product_data.append(clawer.get_product_detail(prod_url))
-        except Exception as e:
-            print(f"Error processing URL {prod_url}: {e}")
+        # Check if the current product URLs are the same as the previous ones
+        if product_url_list == previous_product_urls:
+            print('Reached the last page, ending scraping.')
+            break
 
-    print(product_data)
+        product_data = []
+        for prod_url in product_url_list:
+            try:
+                product_data.append(clawer.get_product_detail(prod_url))
+            except Exception as e:
+                print(f"Error processing URL {prod_url}: {e}")
 
-    fields = ['brand', 'logo', 'category', 'name', 'description', 'image', 'color']
+        print(product_data)
 
-    # Name of csv file
-    filename = f'{page_number}-product-list.csv'
+        fields = ['brand', 'logo', 'category', 'name', 'description', 'image', 'color']
 
-    # Writing to csv file
-    with open(filename, 'w', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(product_data)
+        # Name of CSV file
+        filename = f'URL{url_index + 1}_Page{page_number}-product-list.csv'
 
-    # Update the previous product URLs and increment the page number
-    previous_product_urls = product_url_list
-    page_number += 1
+        # Writing to CSV file
+        with open(filename, 'w', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(product_data)
+
+        # Update the previous product URLs and increment the page number
+        previous_product_urls = product_url_list
+        page_number += 1
