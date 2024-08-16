@@ -14,7 +14,7 @@ def get_all_products():
 def add_product(data):
     try:
         required_fields = ['productID', 'productName', 'brandLogo', 'brandName',
-                           'productCategory', 'colorShade', 'productImage', 'productDescription', 'colorTone']
+                           'productCategory', 'colorShade', 'productImage', 'productDescription', 'seasonColorTone']
 
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
@@ -44,7 +44,7 @@ def add_product(data):
             colorShade=data['colorShade'],
             productImage=data['productImage'],
             productDescription=data['productDescription'],
-            colorTone=data['colorTone'],
+            seasonColorTone=data['seasonColorTone'],
         )
 
         db.session.add(new_product)

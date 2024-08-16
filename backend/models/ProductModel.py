@@ -11,8 +11,7 @@ class Product(db.Model):
     colorShade = db.Column(db.String(255), nullable=False)
     productImage = db.Column(db.String(255), nullable=False)
     productDescription = db.Column(db.String(255), nullable=False)
-    colorTone = db.Column(db.String(255), nullable=False)
-
+    seasonColorTone = db.Column(db.String(255), nullable=False)
 
     def to_dict(self):
         return {
@@ -24,5 +23,5 @@ class Product(db.Model):
             'colorShade': self.colorShade,
             'productImage': self.productImage,
             'productDescription': self.productDescription,
-            'colorTone': self.colorTone,
+            'seasonColorTone': self.seasonColorTone,
         }
