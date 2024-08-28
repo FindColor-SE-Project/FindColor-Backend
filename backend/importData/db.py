@@ -1,5 +1,5 @@
 import mysql.connector
-# import backend.importData.get_all_product as allP
+import backend.importData.get_all_product as allP
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -11,13 +11,7 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 sql = 'INSERT INTO no_season_product (productName, brandLogo, brandName, productCategory, colorShade, productImage, productDescription) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-
-# id = allP.get_product()
-val = [
-    ("productName", "brandLogo", "brandName", "productCategory", "colorShade", "productImage", "productDescription"),
-    ("productName", "brandLogo", "brandName", "productCategory", "colorShade", "productImage", "productDescription"),
-    ("productName", "brandLogo", "brandName", "productCategory", "colorShade", "productImage", "productDescription")
-]
+val = allP.show_product()
 
 mycursor.executemany(sql, val)
 

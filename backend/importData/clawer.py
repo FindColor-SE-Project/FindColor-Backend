@@ -36,16 +36,16 @@ def get_product_detail(url) :
     number_clusters = get_number_clusters(brandName, productCategory)
     colorRGB = get_dominant_colors(colorUrl, number_clusters)
 
+    return (
+        productName,
+        brandLogo,
+        brandName,
+        productCategory,
+        str(colorRGB),
+        imageUrl,
+        productDescription
+    )
 
-    return {
-        'brand': brandName,
-        'logo': brandLogo,
-        'category': productCategory,
-        'name': productName,
-        'description': productDescription,
-        'image': imageUrl,
-        'color': colorRGB
-    }
 
 
 # Function to create a color bar
