@@ -16,5 +16,8 @@ completion = openai.ChatCompletion.create(
     ]
 )
 
+# def getSeason(rgb):
+#     return rgb
+
 # พิมพ์ข้อความที่ได้จากการตอบกลับของ AI
 print(completion.choices[0].message['content'])
