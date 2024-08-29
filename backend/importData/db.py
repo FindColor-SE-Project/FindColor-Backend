@@ -10,11 +10,29 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
-sql = 'INSERT INTO no_season_product (productName, brandLogo, brandName, productCategory, colorShade, productImage, productDescription) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-val = allP.show_product()
+def update_data():
+  clear_table()
+  sql = 'INSERT INTO no_season_product (productName, brandLogo, brandName, productCategory, colorShade, productImage, productDescription) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+  val = allP.get_product()
+  mycursor.executemany(sql, val)
 
-mycursor.executemany(sql, val)
+  mydb.commit()
+  print("1 record inserted, ID:", mycursor.lastrowid)
 
-mydb.commit()
+def clear_table():
+  sql = "DELETE FROM no_season_product"
+  reset_sql = "ALTER TABLE no_season_product AUTO_INCREMENT = 1"
+  try:
+    # Execute the SQL command
+    mycursor.execute(sql)
+    mycursor.execute(reset_sql)
+    # Commit your changes in the database
+    mydb.commit()
+  except:
+    mydb.rollback()
 
-print("1 record inserted, ID:", mycursor.lastrowid)
+
+update_data()
+
+mycursor.close()
+mydb.close()

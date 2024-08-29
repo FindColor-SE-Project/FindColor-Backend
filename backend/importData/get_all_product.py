@@ -61,8 +61,8 @@ for url_index, base_url in enumerate(url_list):
 # After the loop, all scraped products are stored in all_products
 print("Total products scraped:", len(all_products))
 
-def get_product():
+def all_product_number():
     return len(all_products)
 
-def show_product():
+def get_product():
     return all_products
