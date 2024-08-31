@@ -1,21 +1,18 @@
-import openai
-import os
-
-# ดึง API Key จาก environment variable
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-# ตั้งค่า API Key
-openai.api_key = OPENAI_API_KEY
-
-def getSeason():
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+from openai import OpenAI
+client = OpenAI()
+def getSeason(rgb):
+    rgb_str = str(rgb)
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user",
-             "content": "#ff5359 #e77076 #ea8b27 #e884c8 #fc5aa6 these colors are in which personal color (Summer, Spring, Autumn, and Winter)"}
+            {"role": "system", "content": "You know personal color and you only answer in a word."},
+            {
+                "role": "user",
+                "content": f"What is the season of the RGB color {rgb_str}?"
+            }
         ]
     )
-    return completion.choices[0].message['content']
+    return completion.choices[0].message
 
-getSeason()
+
+print(getSeason((100,50,31)))
