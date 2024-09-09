@@ -3,6 +3,7 @@ import requests
 import cv2
 import numpy as np
 import urllib.request
+import backend.services.GenerateSeasonColorTone as gpt
 
 
 def get_product_detail(url) :
@@ -36,6 +37,8 @@ def get_product_detail(url) :
     number_clusters = get_number_clusters(brandName, productCategory)
     colorRGB = get_dominant_colors(colorUrl, number_clusters)
 
+    season = gpt.getSeason(str(colorRGB))
+
     return (
         productName,
         brandLogo,
@@ -43,7 +46,8 @@ def get_product_detail(url) :
         productCategory,
         str(colorRGB),
         imageUrl,
-        productDescription
+        productDescription,
+        season
     )
 
 

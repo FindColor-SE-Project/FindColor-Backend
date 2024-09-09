@@ -5,11 +5,11 @@ import clawer
 # List of URLs to scrape
 url_list = [
     # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,7337,2998,4589_-2:187',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:1101'
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:1101'
     # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,3913,4589,7337_-2:185', 159
     # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:188', 24
     # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,4589,2998,7337_-2:6992',
-    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,4589,7337,3913_-2:180'
+    'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,4589,7337,3913_-2:180'
 ]
 
 # List to store all product data
@@ -45,6 +45,7 @@ for url_index, base_url in enumerate(url_list):
         product_data = []
         for prod_url in product_url_list:
             try:
+                # print("this is product url", prod_url)
                 product_data.append(clawer.get_product_detail(prod_url))
             except Exception as e:
                 print(f"Error processing URL {prod_url}: {e}")

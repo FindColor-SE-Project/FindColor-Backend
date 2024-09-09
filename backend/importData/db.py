@@ -12,7 +12,7 @@ mycursor = mydb.cursor()
 
 def update_data():
   clear_table()
-  sql = 'INSERT INTO no_season_product (productName, brandLogo, brandName, productCategory, colorShade, productImage, productDescription) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+  sql = 'INSERT INTO product (productName, brandLogo, brandName, productCategory, colorShade, productImage, productDescription, colorTone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
   val = allP.get_product()
   mycursor.executemany(sql, val)
 
