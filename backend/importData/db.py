@@ -20,8 +20,8 @@ def update_data():
   print("1 record inserted, ID:", mycursor.lastrowid)
 
 def clear_table():
-  sql = "DELETE FROM no_season_product"
-  reset_sql = "ALTER TABLE no_season_product AUTO_INCREMENT = 1"
+  sql = "DELETE FROM product"
+  reset_sql = "ALTER TABLE product AUTO_INCREMENT = 1"
   try:
     # Execute the SQL command
     mycursor.execute(sql)
@@ -31,7 +31,7 @@ def clear_table():
   except:
     mydb.rollback()
 
-
+# clear_table()
 update_data()
 
 mycursor.close()
