@@ -37,14 +37,19 @@ def get_product_detail(url) :
     number_clusters = get_number_clusters(brandName, productCategory)
     colorRGB = get_dominant_colors(colorUrl, number_clusters)
 
-    season = gpt.getSeason(str(colorRGB))
+    # season = gpt.getSeason(colorRGB)
+    season = "Winter"
+
+    # if brandName == "Laka" and productCategory == "Eyeshadow":
+    #     return ()
+
 
     return (
         productName,
         brandLogo,
         brandName,
         productCategory,
-        str(colorRGB),
+        colorRGB,
         imageUrl,
         productDescription,
         season
@@ -95,7 +100,7 @@ def get_dominant_colors(url, number_clusters):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-        return rgb_values
+        return str(rgb_values)
     except Exception as e:
         print(f"Error processing URL {url}: {e}")
         return []
