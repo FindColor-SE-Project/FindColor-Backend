@@ -1,5 +1,3 @@
-import uuid
-
 from flask import Blueprint, jsonify, request
 import os
 
