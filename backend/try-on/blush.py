@@ -3,10 +3,10 @@ import dlib
 import numpy as np
 
 # Load the input image
-img = cv2.imread('pic4.jpg')
+img = cv2.imread('pic2.jpg')
 
 # Resize the image
-# img = cv2.resize(img, (300, 300))
+img = cv2.resize(img, (400, 500))
 
 # Convert the image to grayscale
 gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -40,7 +40,7 @@ for face in faces:
     right_cheek_landmarks = np.array([[landmarks.part(i).x, landmarks.part(i).y] for i in right_cheek_indices], dtype=np.int32)
 
     # Scale down the landmarks by 20%
-    scale_factor = 0.7
+    scale_factor = 0.5
     center_left = np.mean(left_cheek_landmarks, axis=0)
     center_right = np.mean(right_cheek_landmarks, axis=0)
     left_cheek_landmarks = ((left_cheek_landmarks - center_left) * scale_factor + center_left).astype(np.int32)
@@ -57,16 +57,33 @@ for face in faces:
     cheek_mask = cv2.bitwise_or(left_cheek_mask, right_cheek_mask)
 
     # Define the color for the cheeks
-    cheek_color = (0, 150, 255)  # Example color: Orange
+    cheek_color = (180, 108, 112)
+    # cheek_color = (254, 133, 132)
 
     # Create a colored mask for the cheeks
     cheek_img_color = np.zeros_like(img)
     cheek_img_color[:] = cheek_color
     cheek_img_color = cv2.bitwise_and(cheek_mask, cheek_img_color)
-    cheek_img_color = cv2.GaussianBlur(cheek_img_color, (7, 7), 10)
+
+    def calculate_brightness(image):
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        return np.mean(gray_image)
+
+
+    # Calculate brightness of the original image
+    img_brightness = calculate_brightness(img)
+
+    # Calculate brightness of the cheek color image (before blending)
+    cheek_img_brightness = calculate_brightness(cheek_img_color)
+
+    # Adjust the brightness of cheek_img_color to match the original image brightness
+    brightness_ratio = img_brightness / cheek_img_brightness
+    cheek_img_color = np.clip(cheek_img_color * brightness_ratio, 0, 255).astype(np.uint8)
+
+    cheek_img_color = cv2.GaussianBlur(cheek_img_color, (55, 45), 30)
 
     # Blend the original image with the colored cheek mask
-    final_makeup_cheek = cv2.addWeighted(img, 1, cheek_img_color, 0.6, 0)
+    final_makeup_cheek = cv2.addWeighted(img, 1, cheek_img_color, 0.3, 0)
 
     cv2.imshow("final image cheek", final_makeup_cheek)
 
