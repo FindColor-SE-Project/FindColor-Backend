@@ -1,23 +1,27 @@
-from flask import Blueprint, jsonify, request
-from backend.database.Database import db
-from backend.models.ImageModel import Image
-import os
+from flask import Blueprint, jsonify, request, Flask
+import mysql.connector
+from flask_cors import CORS
 
-from werkzeug.utils import secure_filename
+app = Flask(__name__)
+CORS(app)
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'user_files')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 upload_bp = Blueprint('upload', __name__)
-
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def imageDB():
+    return mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='099*3941115',
+        database='test1'  # ใช้ฐานข้อมูล test1
+    )
 
 @upload_bp.route('/upload', methods=['POST'])
-def uploadImage():
+def insert_image():
     if 'file' not in request.files:
         return jsonify({'message': 'No file part.'}), 400
 
@@ -27,12 +31,30 @@ def uploadImage():
         return jsonify({'message': 'No file part.'}), 400
 
     if file and allowed_file(file.filename):
-        image_data = file.read()
+        filename = file.filename
+        filepath = file.read()  # อ่านข้อมูลไฟล์เป็น binary
 
-        new_image = Image(image_data=image_data)
-        db.session.add(new_image)
-        db.session.commit()
+        # เชื่อมต่อกับฐานข้อมูลและบันทึกข้อมูลไฟล์ลงในตาราง images
+        conn = imageDB()
+        cursor = conn.cursor()
+
+        try:
+            # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล (บันทึกเป็น binary)
+            sql = "INSERT INTO images (filename, filepath) VALUES (%s, %s)"
+            cursor.execute(sql, (filename, filepath))
+            conn.commit()
+        except mysql.connector.Error as err:
+            return jsonify({'message': f"Error: {err}"}), 500
+        finally:
+            cursor.close()
+            conn.close()
 
         return jsonify({'message': 'File uploaded successfully.'}), 201
 
     return jsonify({'message': 'File type not allowed. Only PNG and JPG are accepted.'}), 400
+
+# ลงทะเบียน Blueprint
+app.register_blueprint(upload_bp)
+
+if __name__ == '__main__':
+    app.run(port=8000, debug=True)
