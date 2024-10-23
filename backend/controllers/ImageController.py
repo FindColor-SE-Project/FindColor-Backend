@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 upload_bp = Blueprint('upload', __name__)
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpeg'}
 
 
 def allowed_file(filename):
@@ -35,7 +35,12 @@ def insert_image():
     if file.filename == '':
         return jsonify({'message': 'No file part.'}), 400
 
+    # ตรวจสอบว่าไฟล์มีนามสกุลที่ถูกต้อง
     if file and allowed_file(file.filename):
+        # ตรวจสอบประเภทไฟล์
+        if file.content_type not in ['image/jpeg', 'image/png']:
+            return jsonify({'message': 'File type not allowed. Only PNG and JPEG are accepted.'}), 400
+
         filename = file.filename
         file_data = file.read()  # อ่านข้อมูลไฟล์เป็น binary
 
@@ -55,9 +60,7 @@ def insert_image():
             conn.close()
 
         return jsonify({'message': 'File uploaded successfully.'}), 201
-
-    return jsonify({'message': 'File type not allowed. Only PNG and JPG are accepted.'}), 400
-
+    return jsonify({'message': 'File type not allowed. Only PNG and JPEG are accepted.'}), 400
 
 @upload_bp.route('/upload', methods=['GET'])
 def get_images():
