@@ -50,7 +50,7 @@ def insert_image():
 
         try:
             # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล (บันทึกเป็น binary)
-            sql = "INSERT INTO images (filename, filepath) VALUES (%s, %s)"
+            sql = "INSERT INTO user (filename, filepath) VALUES (%s, %s)"
             cursor.execute(sql, (filename, file_data))
             conn.commit()
         except mysql.connector.Error as err:
@@ -67,7 +67,7 @@ def get_images():
     conn = userDB()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT filename, filepath FROM images")
+        cursor.execute("SELECT filename, filepath FROM user")
         images = cursor.fetchall()
         for image in images:
             image['filepath'] = base64.b64encode(image['filepath']).decode('utf-8')  # แปลงเป็น Base64
