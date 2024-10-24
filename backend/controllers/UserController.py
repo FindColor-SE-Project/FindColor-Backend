@@ -8,7 +8,7 @@ import base64
 app = Flask(__name__)
 CORS(app)
 
-upload_bp = Blueprint('upload', __name__)
+user_bp = Blueprint('user', __name__)
 ALLOWED_EXTENSIONS = {'png', 'jpeg'}
 
 
@@ -16,7 +16,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def imageDB():
+def userDB():
     return mysql.connector.connect(
         host='localhost',
         user='root',
@@ -25,7 +25,7 @@ def imageDB():
     )
 
 
-@upload_bp.route('/upload', methods=['POST'])
+@user_bp.route('/user', methods=['POST'])
 def insert_image():
     if 'file' not in request.files:
         return jsonify({'message': 'No file part.'}), 400
@@ -45,7 +45,7 @@ def insert_image():
         file_data = file.read()  # อ่านข้อมูลไฟล์เป็น binary
 
         # เชื่อมต่อกับฐานข้อมูลและบันทึกข้อมูลไฟล์ลงในตาราง images
-        conn = imageDB()
+        conn = userDB()
         cursor = conn.cursor()
 
         try:
@@ -62,9 +62,9 @@ def insert_image():
         return jsonify({'message': 'File uploaded successfully.'}), 201
     return jsonify({'message': 'File type not allowed. Only PNG and JPEG are accepted.'}), 400
 
-@upload_bp.route('/upload', methods=['GET'])
+@user_bp.route('/user', methods=['GET'])
 def get_images():
-    conn = imageDB()
+    conn = userDB()
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("SELECT filename, filepath FROM images")
@@ -79,7 +79,7 @@ def get_images():
         conn.close()
 
 # ลงทะเบียน Blueprint
-app.register_blueprint(upload_bp)
+app.register_blueprint(user_bp)
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
