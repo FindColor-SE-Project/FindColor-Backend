@@ -1,3 +1,5 @@
+from crypt import methods
+
 import cv2
 from flask import Blueprint, jsonify, request, Flask
 import mysql.connector
@@ -31,13 +33,10 @@ def insert_image():
         return jsonify({'message': 'No file part.'}), 400
 
     file = request.files['file']
-
     if file.filename == '':
         return jsonify({'message': 'No file part.'}), 400
 
-    # ตรวจสอบว่าไฟล์มีนามสกุลที่ถูกต้อง
     if file and allowed_file(file.filename):
-        # ตรวจสอบประเภทไฟล์
         if file.content_type not in ['image/jpeg', 'image/png']:
             return jsonify({'message': 'File type not allowed. Only PNG and JPEG are accepted.'}), 400
 
@@ -49,18 +48,19 @@ def insert_image():
         cursor = conn.cursor()
 
         try:
-            # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล (บันทึกเป็น binary)
+            # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล โดยไม่ระบุ seasonColorTone
             sql = "INSERT INTO user (filename, filepath) VALUES (%s, %s)"
             cursor.execute(sql, (filename, file_data))
             conn.commit()
+            return jsonify({'message': 'File uploaded successfully.'}), 201
         except mysql.connector.Error as err:
             return jsonify({'message': f"Error: {err}"}), 500
         finally:
             cursor.close()
             conn.close()
 
-        return jsonify({'message': 'File uploaded successfully.'}), 201
     return jsonify({'message': 'File type not allowed. Only PNG and JPEG are accepted.'}), 400
+
 
 @user_bp.route('/user', methods=['GET'])
 def get_images():
@@ -77,6 +77,35 @@ def get_images():
     finally:
         cursor.close()
         conn.close()
+
+
+@user_bp.route('/user/seasonColorTone', methods=['POST'])
+def save_seasonColorTone():
+    data = request.json
+    print("Data received:", data)  # ตรวจสอบข้อมูลที่ได้รับ
+    seasonColorTone = data.get('seasonColorTone')
+    user_id = data.get('user_id')  # ดึง user_id จาก JSON
+
+    if not seasonColorTone or not user_id:
+        return jsonify({'message': 'No seasonColorTone or user_id provided'}), 400
+
+    conn = userDB()
+    cursor = conn.cursor()
+
+    try:
+        # อัปเดต seasonColorTone โดยใช้ user_id ที่ได้รับ
+        sql = "UPDATE user SET seasonColorTone = %s WHERE id = %s"
+        cursor.execute(sql, (seasonColorTone, user_id))
+        conn.commit()
+
+        return jsonify({'message': 'Season updated successfully.'}), 200
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")  # แสดงข้อผิดพลาดของฐานข้อมูล
+        return jsonify({'message': f"Error: {err}"}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # ลงทะเบียน Blueprint
 app.register_blueprint(user_bp)
