@@ -82,29 +82,31 @@ def get_images():
 @user_bp.route('/user/seasonColorTone', methods=['POST'])
 def save_seasonColorTone():
     data = request.json
-    print("Data received:", data)  # ตรวจสอบข้อมูลที่ได้รับ
     seasonColorTone = data.get('seasonColorTone')
-    user_id = data.get('user_id')  # ดึง user_id จาก JSON
 
-    if not seasonColorTone or not user_id:
-        return jsonify({'message': 'No seasonColorTone or user_id provided'}), 400
-
+    # แทนที่ `user_id` ที่มาจาก frontend ด้วยการใช้ `id` จากฐานข้อมูลโดยตรง
     conn = userDB()
     cursor = conn.cursor()
 
     try:
-        # อัปเดต seasonColorTone โดยใช้ user_id ที่ได้รับ
-        sql = "UPDATE user SET seasonColorTone = %s WHERE id = %s"
-        cursor.execute(sql, (seasonColorTone, user_id))
-        conn.commit()
+        # สมมติว่าคุณต้องการใช้ id ของไฟล์ล่าสุดที่อัปโหลด
+        cursor.execute("SELECT id FROM user ORDER BY created_at DESC LIMIT 1")
+        result = cursor.fetchone()
 
-        return jsonify({'message': 'Season updated successfully.'}), 200
+        if result:
+            user_id = result[0]
+            sql = "UPDATE user SET seasonColorTone = %s WHERE id = %s"
+            cursor.execute(sql, (seasonColorTone, user_id))
+            conn.commit()
+            return jsonify({'message': 'Season updated successfully.', 'user_id': user_id}), 200
+        else:
+            return jsonify({'message': 'No user found.'}), 404
     except mysql.connector.Error as err:
-        print(f"Database error: {err}")  # แสดงข้อผิดพลาดของฐานข้อมูล
         return jsonify({'message': f"Error: {err}"}), 500
     finally:
         cursor.close()
         conn.close()
+
 
 
 # ลงทะเบียน Blueprint
