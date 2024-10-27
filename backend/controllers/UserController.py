@@ -107,7 +107,22 @@ def save_seasonColorTone():
         cursor.close()
         conn.close()
 
+@user_bp.route('/user', methods=['DELETE'])
+def delete_all_images():
+    conn = userDB()
+    cursor = conn.cursor()
 
+    try:
+        # ลบข้อมูลทั้งหมดในตาราง user
+        sql = "DELETE FROM user"
+        cursor.execute(sql)
+        conn.commit()
+        return jsonify({'message': 'All users deleted successfully.'}), 200
+    except mysql.connector.Error as err:
+        return jsonify({'message': f"Error: {err}"}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 # ลงทะเบียน Blueprint
 app.register_blueprint(user_bp)
