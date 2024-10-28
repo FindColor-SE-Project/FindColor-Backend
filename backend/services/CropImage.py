@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 import os
 
-def detect_and_crop_head(image_data, factor=1.2):  # ลด factor
+def detect_and_crop_head(image_data, crop_width=400, crop_height=500, factor=1.2):
     # Load the pre-trained face detection model from OpenCV
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -27,19 +27,20 @@ def detect_and_crop_head(image_data, factor=1.2):  # ลด factor
         center_x = x + w // 2
         center_y = y + h // 2
         size = int(max(w, h) * factor)
-        x_new = max(0, center_x - size // 2)
-        y_new = max(0, center_y - size // 2)
 
-        # Crop the head region
-        cropped_head = cv_image[y_new:y_new + size, x_new:x_new + size]
+        # กำหนดขนาดครอปตายตัว
+        x_new = max(0, center_x - crop_width // 2)
+        y_new = max(0, center_y - crop_height // 2)
+
+        # Crop the head region with fixed size
+        cropped_head = cv_image[y_new:y_new + crop_height, x_new:x_new + crop_width]
         cropped_head_pil = Image.fromarray(cv2.cvtColor(cropped_head, cv2.COLOR_BGR2RGB))
 
-        # Resize and create oval mask
-        cropped_head_pil = cropped_head_pil.resize((400, 500), Image.LANCZOS)
-        mask = Image.new('L', (400, 500), 0)
+        # Create oval mask
+        mask = Image.new('L', (crop_width, crop_height), 0)
         draw = ImageDraw.Draw(mask)
-        draw.ellipse((0, 0, 400, 500), fill=255)
-        oval_image = Image.new('RGBA', (400, 500))
+        draw.ellipse((0, 0, crop_width, crop_height), fill=255)
+        oval_image = Image.new('RGBA', (crop_width, crop_height))
         oval_image.paste(cropped_head_pil, (0, 0), mask)
 
         # Convert image to Base64
