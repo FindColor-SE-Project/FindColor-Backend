@@ -7,6 +7,8 @@ from flask_cors import CORS
 import numpy as np
 import base64
 
+from backend.services.CropImage import detect_and_crop_head
+
 app = Flask(__name__)
 CORS(app)
 
@@ -77,6 +79,21 @@ def get_images():
     finally:
         cursor.close()
         conn.close()
+
+@user_bp.route('/user/crop_image', methods=['POST'])
+def crop_image():
+    if 'file' not in request.files:
+        return jsonify({'message': 'No file part.'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'message': 'No file selected.'}), 400
+    if file and allowed_file(file.filename):
+        cropped_img_base64 = detect_and_crop_head(file)
+        if cropped_img_base64:
+            return jsonify({'image': cropped_img_base64}), 200
+        else:
+            return jsonify({'message': 'No face detected.'}), 404
+    return jsonify({'message': 'File type not allowed.'}), 400
 
 
 @user_bp.route('/user/seasonColorTone', methods=['POST'])
