@@ -1,13 +1,12 @@
-from crypt import methods
+import io
 
-import cv2
 from flask import Blueprint, jsonify, request, Flask
 import mysql.connector
 from flask_cors import CORS
-import numpy as np
 import base64
 
-from backend.services.CropImage import detect_and_crop_head
+from backend.services.CropImage import crop_head
+from backend.services.DetectImage import detect_image
 
 app = Flask(__name__)
 CORS(app)
@@ -44,6 +43,9 @@ def insert_image():
 
         filename = file.filename
         file_data = file.read()  # อ่านข้อมูลไฟล์เป็น binary
+
+        if not detect_image(io.BytesIO(file_data)):
+            return jsonify({'message': 'No face was detected in the image. Please upload an image again.'}), 400
 
         # เชื่อมต่อกับฐานข้อมูลและบันทึกข้อมูลไฟล์ลงในตาราง images
         conn = userDB()
@@ -88,7 +90,7 @@ def crop_image():
     if file.filename == '':
         return jsonify({'message': 'No file selected.'}), 400
     if file and allowed_file(file.filename):
-        cropped_img_base64 = detect_and_crop_head(file)
+        cropped_img_base64 = crop_head(file)
         if cropped_img_base64:
             return jsonify({'image': cropped_img_base64}), 200
         else:
@@ -125,7 +127,7 @@ def save_seasonColorTone():
         conn.close()
 
 @user_bp.route('/user', methods=['DELETE'])
-def delete_all_images():
+def delete_images():
     conn = userDB()
     cursor = conn.cursor()
 
