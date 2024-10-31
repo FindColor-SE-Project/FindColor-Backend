@@ -5,8 +5,14 @@ import numpy as np
 import urllib.request
 import backend.services.GenerateSeasonColorTone as gpt
 
+def is_valid_product(product):
+    """Check if product data is valid."""
+    return (
+        all(isinstance(field, str) and field.strip() for field in product[:7]) and
+        isinstance(product[4], str)  # Ensuring colorRGB is a string format as expected
+    )
 
-def get_product_detail(url) :
+def get_product_detail(url):
     product_detail = requests.get(url)
     soup = BeautifulSoup(product_detail.content, "html.parser")
 
@@ -19,7 +25,7 @@ def get_product_detail(url) :
     try:
         colorUrl = soup.find('li', {'class': 'active'}).find('a').find('img')['src']
     except:
-        print('No color from' + productName)
+        print(f'No color for product: {productName}')
 
     productCategory = str(meta[2].text).strip()
     if "ปาก" in productCategory or "ลิป" in productCategory:
@@ -29,7 +35,7 @@ def get_product_detail(url) :
     elif "ตา" in productCategory or "อาย" in productCategory:
         productCategory = "Eyeshadow"
     else:
-        print("can't define category in: ", productCategory)
+        print("Undefined category in:", productCategory)
 
     brandName = str(meta[1].text)
     brandLogo = soup.find('a', {'class': 'pro-logo ky-d-ib'})['style'].split("('", 1)[1].split("')")[0]
@@ -37,14 +43,9 @@ def get_product_detail(url) :
     number_clusters = get_number_clusters(brandName, productCategory)
     colorRGB = get_dominant_colors(colorUrl, number_clusters)
 
-    # season = gpt.getSeason(colorRGB)
     season = "Winter"
 
-    # if brandName == "Laka" and productCategory == "Eyeshadow":
-    #     return ()
-
-
-    return (
+    product = (
         productName,
         brandLogo,
         brandName,
@@ -54,6 +55,9 @@ def get_product_detail(url) :
         productDescription,
         season
     )
+
+    return product if is_valid_product(product) else None
+
 
 
 
