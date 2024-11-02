@@ -126,6 +126,25 @@ def save_seasonColorTone():
         cursor.close()
         conn.close()
 
+@user_bp.route('/user/seasonColorTone', methods=['GET'])
+def get_seasonColorTone():
+    conn = userDB()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT seasonColorTone FROM user ORDER BY created_at DESC LIMIT 1")
+        result = cursor.fetchone()
+
+        if result:
+            return jsonify({'seasonColorTone': result[0]}), 200
+        else:
+            return jsonify({'message': 'No seasonColorTone found.'}), 404
+    except mysql.connector.Error as err:
+        return jsonify({'message': f"Error: {err}"}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 @user_bp.route('/user', methods=['DELETE'])
 def delete_image():
     conn = userDB()
