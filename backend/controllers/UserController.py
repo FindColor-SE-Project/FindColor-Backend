@@ -5,7 +5,7 @@ import mysql.connector
 from flask_cors import CORS
 import base64
 
-from backend.services.CropImage import crop_head
+from backend.services.CropImage import crop_face
 from backend.services.DetectImage import detect_image
 
 app = Flask(__name__)
@@ -67,7 +67,7 @@ def insert_image():
 
 
 @user_bp.route('/user', methods=['GET'])
-def get_images():
+def get_image():
     conn = userDB()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -90,7 +90,7 @@ def crop_image():
     if file.filename == '':
         return jsonify({'message': 'No file selected.'}), 400
     if file and allowed_file(file.filename):
-        cropped_img_base64 = crop_head(file)
+        cropped_img_base64 = crop_face(file)
         if cropped_img_base64:
             return jsonify({'image': cropped_img_base64}), 200
         else:
@@ -127,7 +127,7 @@ def save_seasonColorTone():
         conn.close()
 
 @user_bp.route('/user', methods=['DELETE'])
-def delete_images():
+def delete_image():
     conn = userDB()
     cursor = conn.cursor()
 
@@ -136,7 +136,7 @@ def delete_images():
         sql = "DELETE FROM user"
         cursor.execute(sql)
         conn.commit()
-        return jsonify({'message': 'All users deleted successfully.'}), 200
+        return jsonify({'message': 'The image deleted successfully.'}), 200
     except mysql.connector.Error as err:
         return jsonify({'message': f"Error: {err}"}), 500
     finally:

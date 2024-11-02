@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 
-def crop_head(image_data, crop_width=400, crop_height=500, factor=1.2):
+def crop_face(image_data, crop_width=400, crop_height=500, factor=1.2):
     # Load the pre-trained face detection model from OpenCV
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
