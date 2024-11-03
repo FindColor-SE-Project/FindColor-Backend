@@ -3,3 +3,5 @@ venv/
 backend/path/to/venv
 backend/venv/lib/python3.12
 .idea
+backend
+env
