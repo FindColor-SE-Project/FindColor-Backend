@@ -6,7 +6,6 @@ from flask_cors import CORS
 import base64
 
 from services.CropImage import crop_OvalShape, detect_and_crop_head
-from services.DetectImage import detect_image
 
 app = Flask(__name__)
 CORS(app)
