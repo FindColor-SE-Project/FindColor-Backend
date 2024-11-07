@@ -5,7 +5,49 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 
-def crop_face(image_data, crop_width=400, crop_height=500, factor=1.2):
+def detect_and_crop_head(image_data, crop_width=500, crop_height=600, factor=1.7):
+    # Load the pre-trained face detection model from OpenCV
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+    # Read the input image using PIL
+    image = Image.open(image_data)
+
+    # Check if the image size matches the target size
+    if image.size == (crop_width, crop_height):
+        return image  # Return the image as is
+
+    # Convert PIL image to OpenCV format (BGR)
+    cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+
+    # Convert the image to grayscale for face detection
+    gray_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+
+    # Detect faces in the image
+    faces = face_cascade.detectMultiScale(gray_image, scaleFactor=1.3, minNeighbors=5)
+
+    if len(faces) > 0:
+        # Assuming the first face is the target
+        x, y, w, h = faces[0]
+
+        # Calculate the new coordinates and dimensions for a 1:1 aspect ratio
+        center_x = x + w // 2
+        center_y = y + h // 2
+        size = int(max(w, h) * factor)
+        x_new = max(0, center_x - size // 2)
+        y_new = max(0, center_y - size // 2)
+
+        # Crop the head region with a 1:1 aspect ratio
+        cropped_head = cv_image[y_new:y_new+size, x_new:x_new+size]
+
+        # Convert the cropped head back to PIL format and resize to the target dimensions
+        cropped_head_pil = Image.fromarray(cv2.cvtColor(cropped_head, cv2.COLOR_BGR2RGB))
+        cropped_head_resized = cropped_head_pil.resize((crop_width, crop_height))
+
+        return cropped_head_resized  # Return the resized cropped head
+    else:
+        return None  # No face detected
+
+def crop_OvalShape(image_data, crop_width=400, crop_height=500, factor=1.2):
     # Load the pre-trained face detection model from OpenCV
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 

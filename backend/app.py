@@ -5,10 +5,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from flask import Flask
 from flask_cors import CORS
-from backend.database.Database import db
+from database.Database import db
 import pymysql
-from backend.controllers.ProductController import product_bp
-from backend.controllers.UserController import user_bp
+from controllers.ProductController import product_bp
+from controllers.UserController import user_bp
 
 pymysql.install_as_MySQLdb()
 

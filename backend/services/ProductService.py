@@ -1,6 +1,6 @@
 from flask import jsonify, request
-from backend.models.ProductModel import Product
-from backend.database.Database import db
+from models.ProductModel import (Product)
+from database.Database import db
 
 
 def get_all_products():

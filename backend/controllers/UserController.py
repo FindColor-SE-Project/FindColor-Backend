@@ -5,8 +5,8 @@ import mysql.connector
 from flask_cors import CORS
 import base64
 
-from backend.services.CropImage import crop_face
-from backend.services.DetectImage import detect_image
+from services.CropImage import crop_OvalShape, detect_and_crop_head
+from services.DetectImage import detect_image
 
 app = Flask(__name__)
 CORS(app)
@@ -18,7 +18,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpeg'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 def userDB():
     return mysql.connector.connect(
         host='localhost',
@@ -27,15 +26,10 @@ def userDB():
         database='test1'
     )
 
-
 @user_bp.route('/user', methods=['POST'])
 def insert_image():
-    if 'file' not in request.files:
-        return jsonify({'message': 'No file part.'}), 400
 
     file = request.files['file']
-    if file.filename == '':
-        return jsonify({'message': 'No file part.'}), 400
 
     if file and allowed_file(file.filename):
         if file.content_type not in ['image/jpeg', 'image/png']:
@@ -44,8 +38,17 @@ def insert_image():
         filename = file.filename
         file_data = file.read()  # อ่านข้อมูลไฟล์เป็น binary
 
-        if not detect_image(io.BytesIO(file_data)):
+        # Detect and crop image if necessary
+        cropped_image = detect_and_crop_head(io.BytesIO(file_data))
+
+        if cropped_image is None:
             return jsonify({'message': 'No face was detected in the image. Please upload an image again.'}), 400
+
+        # Save cropped image to a binary stream for saving to database
+        output_image = io.BytesIO()
+        cropped_image.save(output_image, format='JPEG')
+        output_image.seek(0)
+        cropped_image_data = output_image.read()
 
         # เชื่อมต่อกับฐานข้อมูลและบันทึกข้อมูลไฟล์ลงในตาราง images
         conn = userDB()
@@ -54,7 +57,7 @@ def insert_image():
         try:
             # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล โดยไม่ระบุ seasonColorTone
             sql = "INSERT INTO user (filename, filepath) VALUES (%s, %s)"
-            cursor.execute(sql, (filename, file_data))
+            cursor.execute(sql, (filename, cropped_image_data))
             conn.commit()
             return jsonify({'message': 'File uploaded successfully.'}), 201
         except mysql.connector.Error as err:
@@ -90,7 +93,7 @@ def crop_image():
     if file.filename == '':
         return jsonify({'message': 'No file selected.'}), 400
     if file and allowed_file(file.filename):
-        cropped_img_base64 = crop_face(file)
+        cropped_img_base64 = crop_OvalShape(file)
         if cropped_img_base64:
             return jsonify({'image': cropped_img_base64}), 200
         else:
