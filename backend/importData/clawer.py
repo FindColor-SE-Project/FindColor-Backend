@@ -43,7 +43,8 @@ def get_product_detail(url):
     number_clusters = get_number_clusters(brandName, productCategory)
     colorRGB = get_dominant_colors(colorUrl, number_clusters)
 
-    season = "Winter"
+    # season = "Winter"
+    season = gpt.getSeason(colorRGB)
 
     product = (
         productName,

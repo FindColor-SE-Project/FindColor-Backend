@@ -1,7 +1,7 @@
 import cv2
 import dlib
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 img = cv2.imread('pic4.jpg')
 # img = cv2.resize(img, (300,300))

@@ -26,8 +26,8 @@ def validate_product_data(data):
 def update_data():
     """Insert product data in chunks."""
     sql = '''
-        INSERT INTO product (productName, brandLogo, brandName, productCategory, 
-                             colorShade, productImage, productDescription, colorTone) 
+        INSERT INTO product1 (productName, brandLogo, brandName, productCategory, 
+                             colorShade, productImage, productDescription, seasonColorTone) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         ON DUPLICATE KEY UPDATE 
             brandLogo=VALUES(brandLogo), 
@@ -52,8 +52,8 @@ def update_data():
 def clear_table():
     """Clear product table and reset AUTO_INCREMENT."""
     try:
-        mycursor.execute("DELETE FROM product")
-        mycursor.execute("ALTER TABLE product AUTO_INCREMENT = 1")
+        mycursor.execute("DELETE FROM product1")
+        mycursor.execute("ALTER TABLE product1 AUTO_INCREMENT = 1")
         mydb.commit()
         print("Table cleared.")
     except mysql.connector.Error as err:

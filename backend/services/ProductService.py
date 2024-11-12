@@ -1,6 +1,6 @@
 from flask import jsonify, request
-from models.ProductModel import (Product)
-from database.Database import db
+from backend.models.ProductModel import Product
+from backend.database.Database import db
 
 
 def get_all_products():
@@ -8,6 +8,7 @@ def get_all_products():
         products = [product.to_dict() for product in Product.query.all()]
         return products
     except Exception as e:
+        print(f"Error in get_all_products: {e}")  # Log the actual error
         return {'error': 'Error to retrieve the data'}, 500
 
 

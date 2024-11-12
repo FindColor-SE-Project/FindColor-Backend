@@ -5,7 +5,7 @@ import mysql.connector
 from flask_cors import CORS
 import base64
 
-from services.CropImage import crop_OvalShape, detect_and_crop_head
+from backend.services.CropImage import crop_OvalShape, detect_and_crop_head
 
 app = Flask(__name__)
 CORS(app)
@@ -21,7 +21,7 @@ def userDB():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='099*3941115',
+        password='373600',
         database='test1'
     )
 
