@@ -1,11 +1,11 @@
 import mysql.connector
-import backend.importData.get_all_product as allP
+import importData.get_all_product as allP
 
 # Database connection setup
 mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="373600",
+    host='localhost',
+    user='root',
+    password='099*3941115',
     database="test1"
 )
 mycursor = mydb.cursor()
@@ -27,7 +27,7 @@ def update_data():
     """Insert product data in chunks."""
     sql = '''
         INSERT INTO product (productName, brandLogo, brandName, productCategory, 
-                             colorShade, productImage, productDescription, colorTone) 
+                             colorShade, productImage, productDescription, seasonColorTone) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         ON DUPLICATE KEY UPDATE 
             brandLogo=VALUES(brandLogo), 

@@ -3,7 +3,7 @@ import requests
 import cv2
 import numpy as np
 import urllib.request
-import backend.services.GenerateSeasonColorTone as gpt
+import services.GenerateSeasonColorTone as gpt
 
 def is_valid_product(product):
     """Check if product data is valid."""
@@ -43,7 +43,7 @@ def get_product_detail(url):
     number_clusters = get_number_clusters(brandName, productCategory)
     colorRGB = get_dominant_colors(colorUrl, number_clusters)
 
-    season = "Winter"
+    season = gpt.getSeason(colorRGB)
 
     product = (
         productName,

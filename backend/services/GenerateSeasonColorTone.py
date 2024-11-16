@@ -1,5 +1,7 @@
 from openai import OpenAI
-client = OpenAI()
+import os
+
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 def getSeason(rgb):
     rgb_str = str(rgb)
     completion = client.chat.completions.create(
