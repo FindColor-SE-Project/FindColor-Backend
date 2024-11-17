@@ -3,8 +3,8 @@ import dlib
 import numpy as np
 # import matplotlib.pyplot as plt
 
-img = cv2.imread('pic4.jpg')
-# img = cv2.resize(img, (300,300))
+img = cv2.imread('pic3.jpg')
+img = cv2.resize(img, (300,300))
 gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # cv2.imshow("gray image", gray_img)
@@ -27,8 +27,8 @@ for face in faces:
         y = landmarks.part(n).y
         landmarkspints.append([x,y])
         # show จุดละเลขบนหน้า
-        cv2.circle(img,(x,y),3,(0,255,0),cv2.FILLED)
-        cv2.putText(img,str(n), (x+10,y-10), cv2.FONT_HERSHEY_PLAIN,0.5,(0,0,255),1)
+        # cv2.circle(img,(x,y),3,(0,255,0),cv2.FILLED)
+        # cv2.putText(img,str(n), (x+10,y-10), cv2.FONT_HERSHEY_PLAIN,0.5,(0,0,255),1)
     landmarkspints = np.array(landmarkspints)
     lipmask = np.zeros_like(img)
     lipimg = cv2.fillPoly(lipmask, [landmarkspints[48:64]],(255,255,255))
