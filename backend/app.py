@@ -1,3 +1,4 @@
+# app.py
 import sys
 import os
 
@@ -9,15 +10,14 @@ from database.Database import db
 import pymysql
 from controllers.ProductController import product_bp
 from controllers.UserController import user_bp
+from controllers.MakeupController import makeup_bp  # Import makeup blueprint
 
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 
-
 def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:373600@localhost/test1'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:099*3941115@localhost/test_flask'
     app.config['SQLALCHEMY_BINDS'] = {
         'user': 'mysql+pymysql://root:373600@localhost/test1'
     }
@@ -29,8 +29,8 @@ def create_app():
         db.create_all()
         app.register_blueprint(product_bp)
         app.register_blueprint(user_bp)
+        app.register_blueprint(makeup_bp)  # Register makeup blueprint
     return app
-
 
 if __name__ == '__main__':
     app = create_app()
