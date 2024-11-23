@@ -65,16 +65,3 @@ def apply_blush_color(img, r, g, b):
         final_makeup_cheek = cv2.addWeighted(img, 1, cheek_img_color, 0.8, 0)
 
     return final_makeup_cheek
-
-# Load the image
-img = cv2.imread('pic4.jpg')
-if img is None:
-    raise FileNotFoundError("The image file was not found.")
-
-# Apply blush color
-final_image = apply_blush_color(img, 254, 128, 175)
-
-# Display the final image
-cv2.imshow("Final Image with Cheek Makeup", final_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
