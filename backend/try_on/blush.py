@@ -1,3 +1,4 @@
+import os
 import cv2
 import dlib
 import numpy as np
@@ -11,7 +12,10 @@ def apply_blush_color(img, r, g, b):
 
     # Initialize face detector and facial landmark predictor
     detector = dlib.get_frontal_face_detector()
-    predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
+    # Use the absolute path for the predictor file
+    predictor_path = os.path.join(os.path.dirname(__file__), "shape_predictor_68_face_landmarks.dat")
+    predictor = dlib.shape_predictor(predictor_path)
 
     # Detect faces
     faces = detector(gray_img)

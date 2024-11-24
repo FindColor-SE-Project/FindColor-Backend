@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 import cv2
 import numpy as np
 import base64
+import os
 
 makeup_bp = Blueprint('makeup', __name__)
 
@@ -11,7 +12,8 @@ def apply_blush():
     try:
         # Inspect the incoming request data for debugging
         data = request.json
-        print("Received data:", data)  # Log the data to verify structure
+        # print("Received data:", data)  # Log the data to verify structure
+        print("Current working directory:", os.getcwd())
 
         # Check for required keys
         if 'image' not in data or 'r' not in data or 'g' not in data or 'b' not in data:
@@ -49,6 +51,7 @@ def apply_blush():
         _, buffer = cv2.imencode('.jpg', final_makeup_cheek)
         image_base64 = base64.b64encode(buffer).decode('utf-8')
 
+        print({"image": f"data:image/jpeg;base64,{image_base64}"})
         return jsonify({"image": image_base64})
     except Exception as e:
         print("Unexpected server error:", e)
