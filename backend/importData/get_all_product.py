@@ -12,54 +12,60 @@ url_list = [
     'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,4589,7337,3913_-2:180'
 ]
 
-# List to store all validated product data
-all_products = []
+all_products = []  # List to store all validated product data
 
-for url_index, base_url in enumerate(url_list):
-    print(f'Scraping URL {url_index + 1}: {base_url}')
-    page_number = 1
-    previous_product_urls = []
 
-    while True:
-        print('Page', page_number)
-        raw_url = f'{base_url}&page={page_number}'
-        response = requests.get(raw_url)
-        soup = BeautifulSoup(response.content, "html.parser")
+def scrape_all_products():
+    """ Function to start scraping all product data """
+    global all_products  # Make sure to modify the global variable
 
-        products = soup.find('ul', {'class': 'lise-row4 New_clear'}).find_all('li')
-        if not products:
-            print('No more products found, ending scraping.')
-            break
+    for url_index, base_url in enumerate(url_list):
+        print(f'Scraping URL {url_index + 1}: {base_url}')
+        page_number = 1
+        previous_product_urls = []
 
-        product_url_list = [product.find_all('a')[1]['href'] for product in products]
+        while True:
+            print('Page', page_number)
+            raw_url = f'{base_url}&page={page_number}'
+            response = requests.get(raw_url)
+            soup = BeautifulSoup(response.content, "html.parser")
 
-        # Check if the current product URLs are the same as the previous ones
-        if product_url_list == previous_product_urls:
-            print('Reached the last page, ending scraping.')
-            break
+            products = soup.find('ul', {'class': 'lise-row4 New_clear'}).find_all('li')
+            if not products:
+                print('No more products found, ending scraping.')
+                break
 
-        product_data = []
-        for prod_url in product_url_list:
-            try:
-                product = clawer.get_product_detail(prod_url)
-                if product:  # Only add valid products
-                    product_data.append(product)
-                else:
-                    print(f"Skipping invalid product from URL: {prod_url}")
-            except Exception as e:
-                print(f"Error processing URL {prod_url}: {e}")
+            product_url_list = [product.find_all('a')[1]['href'] for product in products]
 
-        print(f"Products added from page {page_number}: {len(product_data)}")
+            # Check if the current product URLs are the same as the previous ones
+            if product_url_list == previous_product_urls:
+                print('Reached the last page, ending scraping.')
+                break
 
-        # Add validated products to all_products
-        all_products.extend(product_data)
-        previous_product_urls = product_url_list
-        page_number += 1
+            product_data = []
+            for prod_url in product_url_list:
+                try:
+                    product = clawer.get_product_detail(prod_url)
+                    if product:  # Only add valid products
+                        product_data.append(product)
+                    else:
+                        print(f"Skipping invalid product from URL: {prod_url}")
+                except Exception as e:
+                    print(f"Error processing URL {prod_url}: {e}")
 
-print("Total valid products scraped:", len(all_products))
+            print(f"Products added from page {page_number}: {len(product_data)}")
+
+            # Add validated products to all_products
+            all_products.extend(product_data)
+            previous_product_urls = product_url_list
+            page_number += 1
+
+    print("Total valid products scraped:", len(all_products))
+
 
 def all_product_number():
     return len(all_products)
+
 
 def get_product():
     return all_products

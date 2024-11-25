@@ -25,6 +25,9 @@ def validate_product_data(data):
 
 def update_data():
     """Insert product data in chunks."""
+    # Trigger the scraping process here
+    allP.scrape_all_products()  # Call the function to start scraping
+
     sql = '''
         INSERT INTO product1 (productName, brandLogo, brandName, productCategory, 
                              colorShade, productImage, productDescription, seasonColorTone) 
