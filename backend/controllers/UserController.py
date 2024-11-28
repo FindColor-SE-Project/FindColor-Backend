@@ -5,14 +5,24 @@ import mysql.connector
 from flask_cors import CORS
 import base64
 
-from backend.services.CropImage import crop_OvalShape, detect_and_crop_head
+from services.CropImage import crop_OvalShape, detect_and_crop_head
+
+from models.UserModel import User
 
 app = Flask(__name__)
 CORS(app)
 
 user_bp = Blueprint('user', __name__)
-ALLOWED_EXTENSIONS = {'png', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
+def __init__(self):
+    self.user_data = {
+        'id': User.id,
+        'filename': User.filename,
+        'filepath': User.filepath,
+        'created_at': User.created_at,
+        'seasonColorTone': User.seasonColorTone
+    }
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
