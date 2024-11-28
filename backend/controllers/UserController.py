@@ -19,7 +19,7 @@ def __init__(self):
     self.user_data = {
         'id': User.id,
         'filename': User.filename,
-        'filepath': User.filepath,
+        'image_data': User.filepath,
         'created_at': User.created_at,
         'seasonColorTone': User.seasonColorTone
     }
@@ -65,7 +65,7 @@ def insert_image():
 
         try:
             # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล โดยไม่ระบุ seasonColorTone
-            sql = "INSERT INTO user (filename, filepath) VALUES (%s, %s)"
+            sql = "INSERT INTO user (filename, image_data) VALUES (%s, %s)"
             cursor.execute(sql, (filename, cropped_image_data))
             conn.commit()
             return jsonify({'message': 'File uploaded successfully.'}), 201
@@ -83,10 +83,10 @@ def get_image():
     conn = userDB()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT filename, filepath FROM user")
+        cursor.execute("SELECT filename, image_data FROM user")
         images = cursor.fetchall()
         for image in images:
-            image['filepath'] = base64.b64encode(image['filepath']).decode('utf-8')  # แปลงเป็น Base64
+            image['image_data'] = base64.b64encode(image['image_data']).decode('utf-8')  # แปลงเป็น Base64
         return jsonify(images), 200
     except mysql.connector.Error as err:
         return jsonify({'message': f"Error: {err}"}), 500
