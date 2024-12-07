@@ -47,7 +47,7 @@ def detect_and_crop_head(image_data, crop_width=500, crop_height=600, factor=1.7
     else:
         return None  # No face detected
 
-def crop_OvalShape(image_data, crop_width=400, crop_height=500, factor=1.2):
+def crop_OvalShape(image_data, crop_width=400, crop_height=500):
     # Load the pre-trained face detection model from OpenCV
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 

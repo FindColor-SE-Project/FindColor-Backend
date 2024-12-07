@@ -8,7 +8,7 @@ def get_all_products():
         products = [product.to_dict() for product in Product.query.all()]
         return products
     except Exception as e:
-        return {'error': 'Error to retrieve the data'}, 500
+        return {'error': 'Error to retrieve products data.'}, 500
 
 
 def add_product(data):

@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:373600@localhost/ep-example'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:099*3941115@localhost/test1'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:099*3941115@localhost/test_flask'
     app.config['SQLALCHEMY_BINDS'] = {
         'user': 'mysql+pymysql://root:099*3941115@localhost/test1'
     }
