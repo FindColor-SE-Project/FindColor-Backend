@@ -9,7 +9,7 @@ def get_all_products():
         return products
     except Exception as e:
         print(f"Error in get_all_products: {e}")  # Log the actual error
-        return {'error': 'Error to retrieve the data'}, 500
+        return {'error': 'Error to retrieve products data'}, 500
 
 
 def add_product(data):

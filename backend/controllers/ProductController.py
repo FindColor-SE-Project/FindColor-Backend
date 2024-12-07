@@ -8,7 +8,7 @@ product_bp = Blueprint('product', __name__)
 def get_products():
     result = get_all_products()
     if isinstance(result, dict) and 'error' in result:
-        return jsonify({"error": "Error to retrieve products for this route."}), 500
+        return jsonify({"error": "Error to retrieve products data."}), 500
     return jsonify(result), 200
 
 

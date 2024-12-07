@@ -150,7 +150,7 @@ def get_seasonColorTone():
         if result:
             return jsonify({'seasonColorTone': result[0]}), 200
         else:
-            return jsonify({'message': 'No seasonColorTone found.'}), 404
+            return jsonify({'seasonColorTone': 'None'}), 404
     except mysql.connector.Error as err:
         return jsonify({'message': f"Error: {err}"}), 500
     finally:
@@ -158,7 +158,7 @@ def get_seasonColorTone():
         conn.close()
 
 @user_bp.route('/user', methods=['DELETE'])
-def delete_image():
+def delete_data():
     conn = userDB()
     cursor = conn.cursor()
 
