@@ -45,7 +45,7 @@ def detect_and_crop_head(image_data, crop_width=500, crop_height=600, factor=1.7
 
         return cropped_head_resized  # Return the resized cropped head
     else:
-        return None  # No face detected
+        return image  # No face detected
 
 def crop_OvalShape(image_data, crop_width=400, crop_height=500):
     # Load the pre-trained face detection model from OpenCV
@@ -100,4 +100,4 @@ def crop_OvalShape(image_data, crop_width=400, crop_height=500):
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
         return img_str
 
-    return None
+    return image
