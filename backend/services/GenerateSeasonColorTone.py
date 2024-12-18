@@ -1,16 +1,20 @@
 from openai import OpenAI
-import os
+from dotenv import load_dotenv
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+load_dotenv()
+
+client = OpenAI()
 def getSeason(rgb):
     rgb_str = str(rgb)
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You know personal color and you only answer in a word either 'Autumn', 'Summer', 'Winter', or 'Spring'."},
             {
-                "role": "user",
-                "content": f"What is the season of the RGB color {rgb_str}?"
+                "role": "system",
+                "content": "You know personal color and you only answer in a word either 'Autumn', "
+                           "'Summer', 'Winter', or 'Spring'."},
+            {
+                "role": "user", "content": f"What is the season of the RGB color {rgb_str}?"
             }
         ]
     )
