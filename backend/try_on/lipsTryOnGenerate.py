@@ -46,6 +46,6 @@ def apply_lips_color(img, r, g, b):
     lip_img_color = cv2.GaussianBlur(lip_img_color, (7, 7), 10)
 
     # Blend the original image with the colored lips
-    final_makeup = cv2.addWeighted(img, 1, lip_img_color, 0.3, 0)
+    final_image = cv2.addWeighted(img, 1, lip_img_color, 0.3, 0)
 
-    return final_makeup
+    return final_image

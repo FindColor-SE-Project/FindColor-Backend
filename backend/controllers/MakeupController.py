@@ -1,6 +1,6 @@
-from backend.try_on.blush import apply_blush_color
-from backend.try_on.lips import apply_lips_color
-from backend.try_on.eyeshadow import apply_eyeshadow_color
+from backend.try_on.blushTryOnGenerate import apply_blush_color
+from backend.try_on.lipsTryOnGenerate import apply_lips_color
+from backend.try_on.eyeshadowTryOnGenerate import apply_eyeshadow_color
 from flask import Blueprint, request, jsonify
 import cv2
 import numpy as np
