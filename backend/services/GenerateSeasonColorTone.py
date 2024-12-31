@@ -15,4 +15,4 @@ def getSeason(rgb):
     return completion.choices[0].message.content
 
 
-# print(getSeason([(147, 11, 15)]))
+print(getSeason([(147, 11, 15)]))
