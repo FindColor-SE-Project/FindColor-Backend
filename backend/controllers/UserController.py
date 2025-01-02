@@ -83,11 +83,19 @@ def get_image():
     conn = userDB()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT filename, image_data FROM user")
+        cursor.execute("SELECT id, filename, image_data, created_at, seasonColorTone FROM user")
         images = cursor.fetchall()
+        result = []
         for image in images:
-            image['image_data'] = base64.b64encode(image['image_data']).decode('utf-8')  # แปลงเป็น Base64
-        return jsonify(images), 200
+            user = User(
+                id=image['id'],
+                filename=image['filename'],
+                image_data=image['image_data'],
+                created_at=image['created_at'],
+                seasonColorTone=image['seasonColorTone']
+            )
+            result.append(user.to_dict())
+        return jsonify(result), 200
     except mysql.connector.Error as err:
         return jsonify({'message': f"Error: {err}"}), 500
     finally:
