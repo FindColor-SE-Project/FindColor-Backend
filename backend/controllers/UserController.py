@@ -6,22 +6,13 @@ from flask_cors import CORS
 import base64
 
 from models.UserModel import User
-from services.CropImage import crop_OvalShape, detect_and_crop_head
+from services.CropImageService import crop_OvalShape, detect_and_crop_head
 
 app = Flask(__name__)
 CORS(app)
 
 user_bp = Blueprint('user', __name__)
 ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
-
-def __init__(self):
-    self.user_data = {
-        'id': User.id,
-        'filename': User.filename,
-        'image_data': User.filepath,
-        'created_at': User.created_at,
-        'seasonColorTone': User.seasonColorTone
-    }
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -63,7 +54,6 @@ def insert_image():
         cursor = conn.cursor()
 
         try:
-            # เพิ่มข้อมูลไฟล์ลงในฐานข้อมูล โดยไม่ระบุ seasonColorTone
             sql = "INSERT INTO user (filename, image_data) VALUES (%s, %s)"
             cursor.execute(sql, (filename, cropped_image_data))
             conn.commit()
@@ -82,11 +72,19 @@ def get_image():
     conn = userDB()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT filename, image_data FROM user")
+        cursor.execute("SELECT id, filename, image_data, created_at, seasonColorTone FROM user")
         images = cursor.fetchall()
+        result = []
         for image in images:
-            image['image_data'] = base64.b64encode(image['image_data']).decode('utf-8')  # แปลงเป็น Base64
-        return jsonify(images), 200
+            user = User(
+                id=image['id'],
+                filename=image['filename'],
+                image_data=image['image_data'],
+                created_at=image['created_at'],
+                seasonColorTone=image['seasonColorTone']
+            )
+            result.append(user.to_dict())
+        return jsonify(result), 200
     except mysql.connector.Error as err:
         return jsonify({'message': f"Error: {err}"}), 500
     finally:

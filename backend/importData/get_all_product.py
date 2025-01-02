@@ -1,20 +1,23 @@
 from bs4 import BeautifulSoup
 import requests
 import clawer
+import ssl
+
+ssl._create_default_https_context = ssl._create_stdlib_context
 
 # List of URLs to scrape
 url_list = [
     'https://www.konvy.com/list/makeup/?filter_params=-1:50_-2:187',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:2998,3913,7337,4589_-2:187',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:1101',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:50_-2:185',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:2998_-2:185',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:3913_-2:185',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:4589,7337_-2:185',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:188',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913_-2:6992',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:4589,2998,7337_-2:6992',
-    'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,4589,7337,3913_-2:180'
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:2998,3913,7337,4589_-2:187',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:1101',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50_-2:185',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:2998_-2:185',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:3913_-2:185',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:4589,7337_-2:185',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913,2998,7337,4589_-2:188',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,3913_-2:6992',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:4589,2998,7337_-2:6992',
+    # 'https://www.konvy.com/list/makeup/?filter_params=-1:50,2998,4589,7337,3913_-2:180'
 ]
 
 # List to store all validated product data
