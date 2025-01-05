@@ -1,3 +1,5 @@
+import base64
+
 from backend.database.Database import db
 
 class User(db.Model):

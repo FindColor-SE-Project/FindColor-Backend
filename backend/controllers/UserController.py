@@ -1,13 +1,12 @@
 import io
 
-from flask import Blueprint, jsonify, request, Flask
 import mysql.connector
+from flask import Blueprint, jsonify, request, Flask
 from flask_cors import CORS
 import base64
 
-from services.CropImage import crop_OvalShape, detect_and_crop_head
-
-from models.UserModel import User
+from backend.models.UserModel import User
+from backend.services.CropImageService import crop_OvalShape, detect_and_crop_head
 
 app = Flask(__name__)
 CORS(app)
